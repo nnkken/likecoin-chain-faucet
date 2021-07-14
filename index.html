@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>likecoin-chain Faucet</title>
+    <style>
+      input {
+        width: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      Address: <input type="text" />
+      <button id="claim-button">Claim token</button>
+      <div id="response-div"></div>
+    </div>
+    <script type="module">
+      import { axios } from 'https://unpkg.com/@bundled-es-modules/axios@0.21.1';
+      import { bech32 } from 'https://cdn.skypack.dev/bech32@2.0.0';
+
+      const button = document.querySelector('#claim-button');
+      const resDiv = document.querySelector('#response-div');
+
+      function isCosmosAddress(input) {
+        try {
+          bech32.decode(input);
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+        return /^cosmos1[a-z0-9]{38}$/.test(input);
+      }
+
+      function log(msg) {
+        resDiv.innerHTML = '';
+        const textNode = document.createTextNode(msg);
+        resDiv.appendChild(textNode);
+      }
+
+      button.onclick = async function claim() {
+        const address = document.querySelector('input').value.trim();
+        if (!isCosmosAddress(address)) {
+          log('Invalid address');
+          return;
+        }
+        console.log({ address });
+        button.disabled = true;
+        try {
+          const res = await axios.post('/claim', { address });
+          log(JSON.stringify(res.data));
+        } catch (err) {
+          log(`Error occured: ${JSON.stringify(err)}`);
+        }
+      };
+    </script>
+  </body>
+</html>
