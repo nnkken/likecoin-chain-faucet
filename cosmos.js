@@ -59,8 +59,8 @@ async function send(to, amount) {
         }
       }],
     fee: {
-      amount: [{ denom, amount: '44000000' }],
-      gas: '44000'
+      amount: [{ denom, amount: '80000000' }],
+      gas: '80000'
     },
     chain_id: chainId,
     account_number,
